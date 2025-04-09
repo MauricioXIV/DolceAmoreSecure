@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Nóminas</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+th {
+	background-color: #094c90;
+	color: white;
+}
+
+	tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+	tr:hover {
+	background-color: #ddd;
+}
+
+	td {
+	background-color: #e6f7ff;
+}
+
+	tr:nth-child(odd) td {
+	background-color: #cceeff;
+}
+
+	tr:nth-child(even) td {
+	background-color: #b3e6ff;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+            <h1 style="font-size: 2rem; color: black;"> 
+                <form action="/dashboard/pedidos" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+            </form>
+            </h1>
+            <form action="/dashboard/finanzas/nominas" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Registrar nomina</button>
+            </form>
+            <form action="/mostrar/movimientos" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Mostrar últimos movimientos</button>
+            </form>
+            <form action="/total_ventas" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a ventas</button>
+            </form>
+            <form action="/dashboard/inventario" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a Inventario</button>
+            </form>
+            <h1 style="font-size: 3rem; color: black;"><b>Historial de nóminas</b></h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Colaborador</th>
+                        <th>Tipo de pago</th>
+                        <th>Cantidad</th>
+                        <th>Notas</th>
+                        <th>Eliminar nómina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in datos %}
+                    <tr>
+                        <td>{{ row.fecha }}</td>
+                        <td>{{ row.colaborador }}</td>
+                        <td>{{ row.tipo_de_pago }}</td>
+                        <td>{{ row.total }}</td>
+                        <td>{{ row.notas }}</td>
+                        <td>
+                            <form action="/elimina_la_nomina" method="post">
+                            <input type="hidden" name="id" value="{{ row._id }}">
+                            <button style="background-color: #90064d;" type="submit" class="btn btn-primary btn-block">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 3rem; color:black">
+            <b>Usuario activo: {{ user }}</b>
+        </div>
+        <div class="col-4; text-center">
+            <form action="/logout" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(28, 0, 54); background-color: blueviolet;" type="submit" value="Logout">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard/pedidos" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+        </form>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Volver a inicio</button>
+        </form>
+    </div>
+</body>
+</html>

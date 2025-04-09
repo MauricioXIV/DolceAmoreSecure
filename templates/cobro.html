@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cobro</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .input-cantidad {
+            width: 100px;
+            max-width: 100%;
+        }
+        form {
+            display: inline-block;
+            width: auto;
+        }
+        .precio {
+            font-weight: bold;
+            color: #02B126;
+        }
+        table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+th {
+	background-color: #094c90;
+	color: white;
+}
+
+	tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+	tr:hover {
+	background-color: #ddd;
+}
+
+	td {
+	background-color: #e6f7ff;
+}
+
+	tr:nth-child(odd) td {
+	background-color: #cceeff;
+}
+
+	tr:nth-child(even) td {
+	background-color: #b3e6ff;
+}
+
+    </style>
+</head>
+<body>
+    <div class="row;">
+        <div class="col" style="color:pink">
+            <img src="/static/logo.jpeg" class="img-fluid mx-auto" style="width:25%; height: 200px; float: right;" alt="banner">
+        </div>
+    </div>
+    <div class="row">
+        <h1 style="font-size: 4rem; color: black;"><b>Elige el producto a cobrar</b></h1>
+        <div>
+            <form action="/total_ventas" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a ventas</button>
+            </form>
+            <form action="/dashboard/inventario" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a inventario</button>
+            </form>
+        </div>
+    </div>
+    <ul style="list-style-position: inside; padding-left: 20px; font-size: 1.8rem;">
+        {% for elemento in lista %}
+            <li style="font-weight: bold;">
+                {% if elemento is iterable and elemento is not string %}
+                    {% if elemento[0] is iterable and elemento[0] is not string %}
+                        <ul style="font-weight: normal;">
+                            {% for subelemento in elemento %}
+                                <li>
+                                    {{ subelemento[0] }}
+                                    <span class="precio">(${{ subelemento[1] }})</span>
+                                    <form action="/procesar_pedido" method="POST" style="display: inline-block; width: auto;">
+                                        <input type="hidden" id="id" name="id" value="{{ subelemento[2] }}">
+                                        <input type="hidden" name="producto" value="{{ subelemento[0] }}">
+                                        <input type="hidden" name="precio" value="{{ subelemento[1] }}">
+                                        <input type="number" name="cantidad" min="0" placeholder="Cantidad" required class="input-cantidad">
+                                        <button type="submit">Agregar</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        {{ elemento[0] }}
+                        <span class="precio">(${{ elemento[1] }})</span>
+                        <form action="/procesar_pedido" method="POST" style="display: inline-block; width: auto;">
+                            <input type="hidden" id="id" name="id" value="{{ elemento[2] }}">
+                            <input type="hidden" name="producto" value="{{ elemento[0] }}">
+                            <input type="hidden" name="precio" value="{{ elemento[1] }}">
+                            <input type="number" name="cantidad" min="0" placeholder="Cantidad" required class="input-cantidad">
+                            <button type="submit">Agregar</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    {{ elemento }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    <b style="font-size: 4rem; color: black;">PEDIDO EN CURSO:</b>
+    <div class="row">
+        <div class="col; text-left" style="font-size: 1.8rem; color:black">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Venta</th>
+                        <th>Fecha</th>
+                        <th>Pedido</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Eliminar venta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in ventas %}
+                    <tr>
+                        <td>{{ loop.index }}
+                        </td>
+                        <td>{{ row.fecha }}
+                            </td>
+                        <td>{{ row.pedido }}
+                        </td>
+                        <td>{{ row.cantidad }}
+                        </td>
+                        <td>{{ row.precio }}
+                        </td>
+                        <td>
+                            <form action="/eliminar_compra" method="post">
+                                <input type="hidden" name="id" value="{{ row._id }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 4rem; color:black">
+            <div class="container" id="container">
+                <img src="/static/pastelote.jpeg" class="img-fluid mx-auto" style="width:25%; height: auto; float: right;" alt="precios">
+                <h3 class="text-center">Registra las cajas utilizadas en la venta <b>(SOLO GALLETAS)</b> o si vendiste personalizado indicar la caja utilizada</h3>
+                <form action="/historial_de_ventas" method="post" id="miFormulario">
+                    <div class="form-group">
+                        <label for="caja" style="font-size: 1.2rem;">Tipo de caja utilizada</label>
+                        <input type="text" list="opciones de cajas" class="form-control" id="caja" name="caja">
+                        <datalist id="opciones de cajas">
+                            <option value="Caja cupcake 12">
+                            <option value="Caja cupcake 9">
+                            <option value="Caja flor">
+                            <option value="Caja pay">
+                            <option value="Caja pastel chica">
+                            <option value="Caja pastel mediana">
+                            <option value="Caja pastel grande">       
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero_cajas" style="font-size: 1.2rem;">Cantidad</label>
+                        <input type="number" min="1" class="form-control" id="numero_cajas" name="numero_cajas">
+                    </div>
+                    <input type="hidden" name="monto" value="{{ total }}">
+                </form>
+            </div>
+            <b>TOTAL A COBRAR: {{ total }}</b>
+            <button form="miFormulario" class="external-button" style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">LISTO (REGISTRAR VENTA)</button>
+            <form action="/eliminar_pedido" method="post">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">RESET (LA CAGUÉ)</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 2rem; color:black">
+            <b>Pago realizado con: $</b>
+            <form action="/obtener_cambio" method="post">
+                <input type="number" name="billete" min="0" placeholder="Cantidad" required class="input-cantidad">
+                <input type="hidden" name="precio" value="{{ total }}">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Solicitar cambio</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 2rem; color:black">
+            <b>El cambio a entregar es de: $ {{ cambio }}</b>
+        </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 3rem; color:black">
+            <b>Usuario activo: {{ user }}</b>
+        </div>
+        <div class="col-4; text-center">
+            <form action="/logout" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(28, 0, 54); background-color: blueviolet;" type="submit" value="Logout">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard/pedidos" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+        </form>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Volver a inicio</button>
+        </form>
+    </div>
+</body>
+</html>

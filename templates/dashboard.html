@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="row;">
+        <div class="col" style="color:pink">
+            <img src="/static/logo.jpeg" class="img-fluid mx-auto" style="width:25%; height: 200px; float: right;" alt="banner">
+        </div>
+    </div>
+    <div class="row">
+        <h1 style="font-size: 8rem; color: black;"><b>Inicio</b></h1>
+    </div>
+    <ul style="list-style-position: inside; padding-left: 20px;">
+    <div class="row" style="font-size: 2rem;">
+            <li style="text-align: left;"><a href="/inicio/pedidos">Pedidos</a></li>
+            <li style="text-align: left;"><a href="/dashboard/inventario">Inventario</a></li>
+            <li style="text-align: left;"><a href="/inicio/cobro">Cobro</a></li>
+            <li style="text-align: left;"><a href="/inicio/puntos_de_venta">Puntos de venta</a></li>
+            <li style="text-align: left;"><a href="/total_ventas">Ventas totales</a></li>
+            <li style="text-align: left;"><a href="/checkout">Compras</a></li>
+            <li style="text-align: left;"><a href="/dashboard/finanzas">Finanzas</a></li>
+    </div>
+    </ul>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 3rem; color:black">
+            <b>Usuario activo: {{ user }}</b>
+        </div>
+        <div class="col-4; text-center">
+            <form action="/logout" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(28, 0, 54); background-color: blueviolet;" type="submit" value="Logout">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard/pedidos" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+th {
+	background-color: #094c90;
+	color: white;
+}
+
+	tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+	tr:hover {
+	background-color: #ddd;
+}
+
+	td {
+	background-color: #e6f7ff;
+}
+
+	tr:nth-child(odd) td {
+	background-color: #cceeff;
+}
+
+	tr:nth-child(even) td {
+	background-color: #b3e6ff;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+            <h1 style="font-size: 2rem; color: black;"><b>Pedidos</b> 
+                <form action="/dashboard/pedidos" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+            </form>
+            </h1>
+            <form action="/mostrar/movimientos" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Mostrar últimos movimientos</button>
+            </form>
+            <form action="/total_ventas" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a ventas</button>
+            </form>
+                    <div class="container" id="container">
+                        <img src="/static/pastelote.jpeg" class="img-fluid mx-auto" style="width:20%; height: auto; float: right;" alt="precios">
+                        <h3 class="text-center">Registra las cajas utilizadas en la venta <b>(SOLO GALLETAS)</b> o si vendiste personalizado indicar la caja utilizada</h3>
+                        <form action="/resta_de_cajas_galletas" method="post" id="miFormulario">
+                            <div class="form-group">
+                                <label for="caja" style="font-size: 1.2rem;">Tipo de caja utilizada</label>
+                                <input type="text" list="opciones de cajas" class="form-control" id="caja" name="caja">
+                                <datalist id="opciones de cajas">
+                                    <option value="Caja cupcake 12">
+                                    <option value="Caja cupcake 9">
+                                    <option value="Caja flor">
+                                    <option value="Caja pay">
+                                    <option value="Caja pastel chica">
+                                    <option value="Caja pastel mediana">
+                                    <option value="Caja pastel grande">       
+                                </datalist>
+                            </div>
+                            <div class="form-group">
+                                <label for="numero_cajas" style="font-size: 1.2rem;">Cantidad</label>
+                                <input type="number" min="1" class="form-control" id="numero_cajas" name="numero_cajas">
+                            </div>
+                            <button type="submit" class="btn btn-danger">Registrar</button>
+                        </form>
+                    </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Pedido</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Indicaciones</th>
+                        <th>Precio Total</th>
+                        <th>Pagado</th>
+                        <th>Total Restante</th>
+                        <th>Eliminar pedido</th>
+                        <th>Actualizar pedido</th>
+                        <th>Registrar venta exitosa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in datos %}
+                    <tr>
+                        <td>{{ row.fecha }}</td>
+                        <td>{{ row.cliente }}</td>
+                        <td>{{ row.pedido }}</td>
+                        <td>{{ row.cantidad }}</td>
+                        <th>{{ row.precio }}</th>
+                        <td>{{ row.indicaciones }}</td>
+                        <td>{{ row.total }}</td>
+                        <td>
+                            <form action="/resta" method="post">
+                            <input type="hidden" name="id" value="{{ row._id }}">
+                            <input type="number" class="form-control" id="pagado" name="num">
+                            <input type="hidden" class="form-control" id="pago" name="pago">
+                            <button style="background-color: #90064d;" type="submit" class="btn btn-primary btn-block">Abonar en caja</button>
+                            </form>
+                            <form action="/resta2" method="post">
+                                <input type="hidden" name="id" value="{{ row._id }}">
+                                <input type="number" class="form-control" id="pagado" name="num">
+                                <input type="hidden" class="form-control" id="pago" name="pago">
+                                <button style="background-color: #90064d;" type="submit" class="btn btn-primary btn-block">Abonar en banco</button>
+                            </form>
+                        </td>
+                        <td>{{ row.total_restante }}</td>
+                        <td>
+                            <form action="/delete" method="post">
+                                <input type="hidden" name="id" value="{{ row._id }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/actualizacion_de_pedidos/{{ row._id }}" method="get">
+                                <input type="hidden" name="pedido_id" value="{{ row._id }}">
+                                <button type="submit" class="btn btn-danger">Actualizar</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/registro_de_venta" method="post">
+                                <input type="hidden" name="id" value="{{ row._id }}">
+                                <button type="submit" class="btn btn-danger">Registrar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 3rem; color:black">
+            <b>Usuario activo: {{ user }}</b>
+        </div>
+        <div class="col-4; text-center">
+            <form action="/logout" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(28, 0, 54); background-color: blueviolet;" type="submit" value="Logout">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard/pedidos" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+        </form>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Volver a inicio</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de efectivo</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+th {
+	background-color: #094c90;
+	color: white;
+}
+
+	tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+	tr:hover {
+	background-color: #ddd;
+}
+
+	td {
+	background-color: #e6f7ff;
+}
+
+	tr:nth-child(odd) td {
+	background-color: #cceeff;
+}
+
+	tr:nth-child(even) td {
+	background-color: #b3e6ff;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+            <h1 style="font-size: 2rem; color: black;"> 
+                <form action="/dashboard/pedidos" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+            </form>
+            </h1>
+            <form action="/checkout" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Registrar compra</button>
+            </form>
+            <form action="/mostrar/movimientos" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Mostrar últimos movimientos</button>
+            </form>
+            <form action="/total_ventas" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a ventas</button>
+            </form>
+            <form action="/dashboard/inventario" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Ir a Inventario</button>
+            </form>
+            <h1 style="font-size: 3rem; color: black;"><b>Flujo de efectivo del día {{ fecha }}</b></h1>
+            <form action="/dashboard/finanzas/flujoefectivo" method="get">
+                <label style="font-size: 2rem; color: black;" for="fecha"><b>Cambiar a día: </b></label>
+                <input style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(241, 143, 234);" type="date" id="fecha" name="fecha" required>
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Consultar</button><b>?</b>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th><b>Actividades Operativas</b></th>
+                        <th><b>Cantidad</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ingresos por ventas</td>
+                        <td>{{ ventadas }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pago a proveedores</td>
+                        <td>{{ proveedores }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pago de nóminas</td>
+                        <td>{{ nominas }}</td>
+                    </tr>
+                    <tr>
+                        <td>Gastos operativos</td>
+                        <td>{{ costos }}</td>
+                    </tr>
+                    <tr>
+                        <td>Impuestos pagados</td>
+                        <td>{{ impuestos }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Flujo de efectivo neto de actividades operativas</b></td>
+                        <td><b>{{ neto_operativas }}</b></td>
+                    </tr>
+                    <tr>
+                        <th><b>Actividades de Inversión</b></th>
+                        <th><b>Cantidad</b></th>
+                    </tr>
+                    <tr>
+                        <td>Inversión en activos</td>
+                        <td>{{ inv_activos }}</td>
+                    </tr>
+                    <tr>
+                        <td>Venta de activos</td>
+                        <td>{{ venta_activos }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Flujo de efectivo neto de actividades de inversión</b></td>
+                        <td><b>{{ neto_inversion }}</b></td>
+                    </tr>
+                    <tr>
+                        <th><b>Actividades de Financiamiento</b></th>
+                        <th><b>Cantidad</b></th>
+                    </tr>
+                    <tr>
+                        <td>Préstamos obtenidos</td>
+                        <td>{{ prestamos }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pago de dividendos</td>
+                        <td>{{ pago_dividendos }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pago de intereses</td>
+                        <td>{{ pago_intereses }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Flujo de efectivo neto de actividades de financiamiento</b></td>
+                        <td><b>{{ neto_financiamiento }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>Capital inicial (Caja)</b></td>
+                        <td><b>{{ caja }}</b></td>
+                    </tr>
+                    <tr>
+                        <th><b>Flujo total diario sin caja</b></th>
+                        <th><b>{{ liquidez }}</b></th>
+                            <script>
+                                async function verificarLiquidez() {
+                                    const fecha = document.getElementById('fecha').value;
+                                    console.log(fecha)
+                                    if (!fecha) {
+                                        console.error("Fecha no seleccionada");
+                                        return;
+                                    }
+                                    try {
+                                        const response = await fetch(`/dashboard/finanzas/flujoefectivo/json?fecha=${fecha}`);
+                                        if (!response.ok) {
+                                            throw new Error(`HTTP error! status: ${response.status}`);
+                                        }
+                                        const data = await response.json();
+
+                                        const caja = data.capital_total;
+                                        console.log(`Liquidez actual: ${caja}`);
+                        
+                                        if (caja >= 4000) {
+                                            alert("¡Alerta! Ya se debe realizar el corte de caja.");
+                                        }
+                                    } catch (error) {
+                                        console.error("Error al obtener la liquidez:", error);
+                                    }
+                                }
+                                document.getElementById('fecha').addEventListener('change', verificarLiquidez);
+                            </script>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="col-4; text-center">
+                <form action="/corte_caja" method="get">
+                    <input type="hidden" name="caja" value= 4000>
+                    <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Realizar corte de caja</button>
+                </form>
+            </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-4; text-left" style="font-size: 3rem; color:black">
+            <b>Usuario activo: {{ user }}</b>
+        </div>
+        <div class="col-4; text-center">
+            <form action="/logout" method="post">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(28, 0, 54); background-color: blueviolet;" type="submit" value="Logout">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard/pedidos" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Crear pedido</button>
+        </form>
+    </div>
+    <div class="col-4; text-center">
+        <form action="/dashboard" method="get">
+            <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Volver a inicio</button>
+        </form>
+    </div>
+</body>
+</html>

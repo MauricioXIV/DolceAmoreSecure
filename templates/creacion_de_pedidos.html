@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #container {
+	max-width: 500px;
+	margin-top: 50px;
+	padding: 20px;
+	background-color: #CB7EB7;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="row">
+            <div class="col">
+                <img src="/static/precios_real.jpg" class="img-fluid mx-auto" style="width:100%; height: auto; float: right;" alt="precios">
+            </div>
+        </div>
+        <h1 class="text-center">Crea un pedido</h1>
+        <form action="/dashboard/creacion_de_pedidos" method="post">
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input class="form-control" type="date" id="fecha" name="fecha" required>
+            </div>
+            <div class="form-group">
+                <label for="Cliente">Cliente</label>
+                <input type="text" class="form-control" id="cliente" name="cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="Pedido">Pedido</label>
+                <input list="opciones de pedido" type="text" class="form-control" id="pedido" name="pedido" required>
+                <datalist id="opciones de pedido">
+                    <option value="Galletas chicas">
+                    <option value="Galletas medianas">
+                    <option value="Galletas grandes">
+                    <option value="Pasteles chicos">
+                    <option value="Pasteles medianos">
+                    <option value="Pasteles grandes">
+                    <option value="Pastel de temporada">
+                    <option value="Personalizado (colocar 1 en cantidad)">       
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="Indicaciones">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+            </div>
+            <div class="form-group">
+                <label for="Indicaciones">Precio</label>
+                <input type="number" class="form-control" id="precio" name="precio" required>
+            </div>
+            <div class="form-group">
+                <label for="Indicaciones">Indicaciones</label>
+                <input type="text" class="form-control" id="indicaciones" name="indicaciones" required>
+            </div>
+            <button style="background-color: #90064d; font-size: 2rem;" type="submit" class="btn btn-primary btn-block">CREAR PEDIDO</button>
+        </form>
+        <form action="/logout" method="post" class="text-center">
+            <div class="p-3">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(28, 0, 54); background-color: blueviolet;" type="submit" value="Logout">Cerrar sesión</button>
+            </div>
+        </form>
+        <div class="col-4; text-center">
+            <form action="/dashboard" method="get">
+                <button style="font-size: 25px; padding: 20px 30px; color:rgb(132, 0, 255); background-color: rgb(21, 5, 37);" type="submit">Volver a inicio</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4; text-left" style="font-size: 3rem; color:black">
+        <b>Usuario activo: {{ user }}</b>
+    </div>
